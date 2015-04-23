@@ -1,0 +1,117 @@
+{
+	"config": {
+		"genesis.pinf.org/0": {
+			"programs": {
+				"demos/01-HelloWorld": {
+					"location": "./node_modules/to.pinf.lib/node_modules/it.pinf.lib/demos/01-HelloWorld/program.json",
+					"config": {
+						"github.com/pinf-to/pinf-to-sourcemint/0": {
+							"$to": "dist",
+							"catalog": {
+								"uid": "281505f9-a828-4d59-880f-fe683c5f4a70",
+								"revision": "{{sourceHash()}}",
+								"name": "demos",
+								"alias": "01-HelloWorld"
+							},
+							"streams": {
+								"dev": {
+									"id": "github.com/pinf-to/pinf-to-smi/demos/01-HelloWorld",
+									"revision": "{{sourceHash()}}",
+									"aspects": {
+										"archive.tar.gz": {
+											"bundler": "tar.gz"
+										},
+										"archive1.tar.gz": {
+											"bundler": "tar.gz"
+										}
+									}
+								}
+							}
+						},
+						"github.com/pinf-to/pinf-to-aws-s3/0": {
+							"$to": "dist-pub",
+							"accessKeyId": "{{env.AWS_ACCESS_KEY}}",
+							"secretAccessKey": "{{env.AWS_SECRET_KEY}}",
+							"distributions": {
+								"pub": {
+									"bucket": "pinf-to-smi-demos",
+									"path": "01-HelloWorld",
+									"source": "{{$from.dist.path}}"
+								}
+							}
+						},						
+						"github.com/pinf-to/pinf-to-smi/0": {
+							"$to": "installer",
+							"installations": {
+								"dist": {
+									"revision": "{{$from.dist-pub.distributions.pub.sourceHash}}",
+									"upstream": {
+								        "catalogs": {
+								            "packageSet1": {
+								                "uri": "{{$from.dist-pub.distributions.pub.url}}/catalog.json"
+								            }
+								        }
+								    },
+								    "mappings": {
+								    	"demo": {
+								    		"location": "packageSet1/01-HelloWorld",
+								    		"aspect": "archive.tar.gz"
+								    	}
+								    },
+								    "install": true
+								},
+								"linked-source": {
+									"revision": "{{$from.dist-pub.distributions.pub.sourceHash}}",
+									"upstream": {
+								        "packages": {
+								            "packageSet1": [
+								            	{
+								            		"location": "{{$from.dist.streams.dev.bootPackagePath}}",
+								            		"aspect": "archive.tar.gz"
+								            	}
+								            ]
+								        },
+								        "catalogs": {
+								            "packageSet1": {
+								                "uri": "{{$from.dist-pub.distributions.pub.url}}/catalog.json"
+								            }
+								        }
+								    },
+								    "mappings": {
+								    	"./demo-linked-source": {
+								    		"location": "packageSet1/01-HelloWorld",
+								    		"aspect": "archive.tar.gz"
+								    	}
+								    },
+								    "install": true
+								},
+								"linked-source-multi-aspect": {
+									"revision": "{{$from.dist-pub.distributions.pub.sourceHash}}",
+									"upstream": {
+								        "packages": {
+								            "packageSet1": [
+								            	{
+								            		"location": "{{$from.dist.streams.dev.bootPackagePath}}",
+								            		"aspect": "archive.tar.gz"
+								            	}
+								            ]
+								        },
+								        "catalogs": {
+								            "packageSet1": {
+								                "uri": "{{$from.dist-pub.distributions.pub.url}}/catalog.json"
+								            }
+								        }
+								    },
+								    "mappings": {
+								    	"./linked-source-multi-aspect": "packageSet1/01-HelloWorld"
+								    },
+								    "install": true
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,4 @@
+/node_modules/
+/.pio.cache/
+.pinf.*/
+program.rt.json
